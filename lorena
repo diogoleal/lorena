@@ -36,19 +36,19 @@ import platform
 sysos = platform.system()
 if sysos == "Linux" or "linux2":
     # Set path for sdlame or mame
-    mamebin = os.popen("which sdlmame").read()
+    mamebin = os.popen("/which sdlmame").read()
     if not mamebin:
-	mamebin = os.popen("which mame").read()
-    CONFIG_DIR  = os.path.expanduser("~/.lorena/")
+        mamebin = os.popen("which mame").read()
+    CONFIG_DIR = os.path.expanduser("~/.lorena/")
     if not os.path.isdir(CONFIG_DIR):
         os.makedirs(CONFIG_DIR)
     CONFIG_FILE = os.path.join(CONFIG_DIR, "lorena.conf")
     CONFS = []
     ROM = ""
 elif sysos == "darwin":
-   namebin = '/usr/bin/sdlmame'
+    namebin = '/usr/bin/sdlmame'
 elif sysos == "win32":
-   mamebin = 'c:\mame.exe'
+    mamebin = 'c:\mame.exe'
 else:
     print 'Unknown Operation system'
     sys.exit(1)
@@ -62,7 +62,7 @@ class ProgressBarWindow(QtGui.QDialog):
         self.progressbar = QtGui.QProgressBar()
         self.lblText = QtGui.QLabel(text)
         self.lblStatus = QtGui.QLabel("Loading game list, please wait...")
-        self.lblStatus.setMinimumSize(240,16)
+        self.lblStatus.setMinimumSize(240, 16)
         self.pgIcon = QtGui.QLabel()
         self.pgIcon.setPixmap(QtGui.QPixmap("ui/pixmaps/mameicon.png"))
         self.btnAbort = QtGui.QPushButton("Abort")
@@ -198,7 +198,7 @@ class ProgressBarWindow(QtGui.QDialog):
         tblGames.itemClicked.connect(self.gameItemSelect)
         tblGames.resizeColumnsToContents()
 
-        graphicsView.setViewportMargins(20,20,20,20)
+        graphicsView.setViewportMargins(20, 20, 20, 20)
         graphicsView.setScene(scene)
         graphicsView.setAlignment(QtCore.Qt.AlignTop | QtCore.Qt.AlignLeft)
 
@@ -333,7 +333,7 @@ class XMLSettings():
             children2 = [node for node in father.childNodes if node.nodeType == x.ELEMENT_NODE]
             for child in children2:
                 children_names.append(child.nodeName + ", " + self.nodeText(child))
-        return (children_names)
+        return children_names
 
     def loadConf(self, xmlfile):
         try:
@@ -366,7 +366,7 @@ class XMLSettings():
                 elif child.split(",")[0] == "videopath":
                     videopath = string.strip(child.split(",")[1]).encode("utf8")
         except:
-            return [False,"","","","","","","","","","","","",""]
+            return [False, "", "", "", "", "", "", "", "", "", "", "", "", ""]
         return [True, fullscreen, scale, fsautomatic, fsmanual, fseffect, hwspeed, prspeed, gameinfo, joystick, mamepath, rompath, snappath, videopath]
 
 class Mame():
@@ -397,7 +397,7 @@ class Mame():
             item = QtGui.QTreeWidgetItem(trLibraries)
             item.setText(0, l[1])
 
-    def getNodetext(self, elem,node_name,default_value=None):
+    def getNodetext(self, elem, node_name, default_value=None):
         node = elem.find(node_name)
         if node == None:
             return default_value
@@ -407,22 +407,22 @@ class Mame():
         doc = ET.ElementTree(ET.fromstring(xmllist))
         game_nodes = doc.getroot().findall("game")
         for game_node in game_nodes:
-            name = game_node.attrib.get("name",None)
-            sourcefile = game_node.attrib.get("sourcefile",None)
-            cloneof = game_node.attrib.get("cloneof",None)
-            romof = game_node.attrib.get("romof",None)
-            description = self.getNodetext(game_node,"description","")
-            year = self.getNodetext(game_node,"year","")
-            manufacturer = self.getNodetext(game_node,"manufacturer","")
+            name = game_node.attrib.get("name", None)
+            sourcefile = game_node.attrib.get("sourcefile", None)
+            cloneof = game_node.attrib.get("cloneof", None)
+            romof = game_node.attrib.get("romof", None)
+            description = self.getNodetext(game_node, "description", "")
+            year = self.getNodetext(game_node, "year", "")
+            manufacturer = self.getNodetext(game_node, "manufacturer", "")
             xmlresult = [name, sourcefile, cloneof, romof, description, year, manufacturer]
         return xmlresult
 
-    def getGameList(self, params = ""):
+    def getGameList(self, params=""):
         QtCore.QCoreApplication.processEvents()
         strxml_gamelist = self.mameExec("-lx", "-norc", params)
         xmldoc_gamelist = ET.ElementTree(ET.fromstring(strxml_gamelist))
         for game_node in xmldoc_gamelist.getroot().findall("game"):
-            yield [game_node.attrib.get("name",None), game_node.attrib.get("sourcefile",None), game_node.attrib.get("cloneof",None), game_node.attrib.get("romof",None), self.getNodetext(game_node,"description",""), self.getNodetext(game_node,"year",""), self.getNodetext(game_node,"manufacturer","")]
+            yield [game_node.attrib.get("name", None), game_node.attrib.get("sourcefile", None), game_node.attrib.get("cloneof", None), game_node.attrib.get("romof", None), self.getNodetext(game_node, "description", ""), self.getNodetext(game_node, "year", ""), self.getNodetext(game_node, "manufacturer", "")]
 
 class dataBase():
     def open(self):
